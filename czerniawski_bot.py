@@ -1,4 +1,5 @@
 # Импорт библиотек
+
 from telegram import Update  # Для работы с обновлениями сообщений Telegram
 from telegram.ext import Application, CommandHandler, ContextTypes  # Основные компоненты бота
 import requests  # Для HTTP-запросов к API
@@ -9,16 +10,19 @@ import datetime  # Для работы с датой и временем
 import feedparser  # Для парсинга RSS-лент 
 
 # Токены
+
 load_dotenv()  # Загружаем переменные окружения из .env
 TG_TOKEN = os.getenv("TG_TOKEN")           # Токен Telegram-бота
 WEATHER_TOKEN = os.getenv("WEATHER_TOKEN") # Токен OpenWeatherMap
 FOOTBALL_TOKEN = os.getenv("FOOTBALL_TOKEN") # Токен football-data.org (для моей любимой EPL)
 
 # Наличие токенов
+
 if not TG_TOKEN or not WEATHER_TOKEN or not FOOTBALL_TOKEN:
     raise ValueError("Ошибка: не найден один из токенов. Проверь файл .env")
 
 # Категорически вас приветствую
+
 async def handle_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Обработчик команды /start
     welcome_text = (
@@ -35,6 +39,7 @@ async def handle_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(welcome_text)
 
 # Погода
+
 def fetch_weather_data(city: str, attempts: int = 3, pause: int = 2):
     # Запрашивает данные о погоде с retry
     for i in range(attempts):
@@ -84,6 +89,7 @@ async def handle_weather(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(msg)
 
 # Валюта
+
 POPULAR = ["RUB", "USD", "EUR", "GBP", "JPY", "CNY"]  # Популярные валюты
 CURRENCY_FLAGS = {"RUB":"🇷🇺","USD":"🇺🇸","EUR":"🇪🇺","GBP":"🇬🇧","JPY":"🇯🇵","CNY":"🇨🇳"}
 
@@ -106,6 +112,7 @@ async def handle_rate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("\n".join(msg_lines))
 
 # Фантики
+
 CRYPTO_LIST = [
     ("bitcoin", "₿ Bitcoin"), ("ethereum", "Ξ Ethereum"), ("binancecoin", "🟡 BNB"),
     ("cardano", "🔷 ADA"), ("solana", "🟣 SOL"), ("ripple", "💧 XRP"),
@@ -129,6 +136,16 @@ async def handle_crypto(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(msg)
 
 # PREMIER LEAGUE
+
+def format_points(n):
+    n = abs(n)
+    if n % 10 == 1 and n % 100 != 11:
+        return f"{n} очко"
+    elif 2 <= n % 10 <= 4 and not 12 <= n % 100 <= 14:
+        return f"{n} очка"
+    else:
+        return f"{n} очков"
+
 async def handle_premier(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Вывод всей таблицы Премьер-лиги с 💙 у Everton
     headers = {"X-Auth-Token": FOOTBALL_TOKEN}  # Заголовки с токеном
@@ -147,12 +164,13 @@ async def handle_premier(update: Update, context: ContextTypes.DEFAULT_TYPE):
             if team_name == "Everton FC":
                 team_name += " 💙"  # Я болею за Everton
             points = t["points"]  # Количество очков
-            msg_lines.append(f"{pos}. {team_name} — {points} очков")
+            msg_lines.append(f"{pos}. {team_name} — {format_points(points)}")
     except Exception:
         msg_lines = ["Не удалось получить таблицу Премьер-лиги. Попробуйте позже."]
     await update.message.reply_text("\n".join(msg_lines))
 
 # Ну и раз уж у меня футбольный бот, то пусть парсит новости с еспн
+
 async def handle_football_news(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Выводит топ-5 последних футбольных новостей из RSS ESPN Soccer
     try:
@@ -168,6 +186,7 @@ async def handle_football_news(update: Update, context: ContextTypes.DEFAULT_TYP
     await update.message.reply_text("\n\n".join(msg_lines))
 
 # хелп
+
 async def handle_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Выводит список всех доступных команд бота с кратким описанием
     help_text = (
