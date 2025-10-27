@@ -78,7 +78,7 @@ async def handle_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/rate — курсы валют\n"
         "/crypto — курсы 10 популярных криптовалют\n"
         "/premier — таблица Премьер-лиги\n"
-        "/football_news — последние футбольные новости"
+        "/football_news — последние футбольные новости\n"
         '/help — справочник по командам. Они и так тут приведены, но по тз нужно чтобы была команда хелп (:'
     )
     await update.message.reply_text(welcome_text)
