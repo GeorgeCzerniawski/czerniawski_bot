@@ -20,7 +20,7 @@ if not TG_TOKEN or not WEATHER_TOKEN or not FOOTBALL_TOKEN:
 
 # Категорически вас приветствую
 async def handle_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Обработчик команды /start"""
+    # Обработчик команды /start
     welcome_text = (
         "Привет!\n"
         "Я помогу тебе узнать погоду, курсы валют, криптовалюты и таблицу EPL.\n\n"
@@ -36,7 +36,7 @@ async def handle_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # Погода
 def fetch_weather_data(city: str, attempts: int = 3, pause: int = 2):
-    """Запрашивает данные о погоде с retry"""
+    # Запрашивает данные о погоде с retry
     for i in range(attempts):
         try:
             response = requests.get(
@@ -57,7 +57,7 @@ def fetch_weather_data(city: str, attempts: int = 3, pause: int = 2):
                 return {"error": "Не удалось подключиться к серверу. Попробуйте позже."}
 
 async def handle_weather(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Обработчик команды /weather"""
+    # Обработчик команды /weather
     if not context.args:
         await update.message.reply_text("Пожалуйста, укажите город: /weather <название>")
         return
@@ -88,7 +88,7 @@ POPULAR = ["RUB", "USD", "EUR", "GBP", "JPY", "CNY"]  # Популярные в�
 CURRENCY_FLAGS = {"RUB":"🇷🇺","USD":"🇺🇸","EUR":"🇪🇺","GBP":"🇬🇧","JPY":"🇯🇵","CNY":"🇨🇳"}
 
 def get_exchange_rates():
-    """Получает актуальные курсы валют от ЦБ РФ"""
+    #Получает актуальные курсы валют от ЦБ РФ
     url = "https://www.cbr-xml-daily.ru/daily_json.js"
     response = requests.get(url)
     data = response.json()
@@ -97,9 +97,9 @@ def get_exchange_rates():
     return rates
 
 async def handle_rate(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Обработчик команды /rate"""
+    # Обработчик команды /rate
     rates = get_exchange_rates()
-    msg_lines = ["💱 Курсы валют относительно рубля:\n"]
+    msg_lines = ["Курсы валют относительно рубля:\n"]
     for cur in POPULAR:
         flag = CURRENCY_FLAGS.get(cur, "")
         msg_lines.append(f"{flag} {cur}: {rates.get(cur,0.0):.4f} ₽")
@@ -114,7 +114,7 @@ CRYPTO_LIST = [
 ]
 
 async def handle_crypto(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Обработчик команды /crypto"""
+    # Обработчик команды /crypto
     try:
         ids = ",".join([c[0] for c in CRYPTO_LIST])
         response = requests.get(
@@ -125,12 +125,12 @@ async def handle_crypto(update: Update, context: ContextTypes.DEFAULT_TYPE):
         msg_lines = [f"{name}: ${data.get(cid, {}).get('usd', 0.0):.2f}" for cid, name in CRYPTO_LIST]
         msg = "\n".join(msg_lines)
     except Exception:
-        msg = "Не удалось получить данные о криптовалюте 😅 Попробуйте позже."
+        msg = "Не удалось получить данные о криптовалюте. Попробуйте позже."
     await update.message.reply_text(msg)
 
 # PREMIER LEAGUE
 async def handle_premier(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Вывод всей таблицы Премьер-лиги с 💙 у Everton"""
+    # Вывод всей таблицы Премьер-лиги с 💙 у Everton
     headers = {"X-Auth-Token": FOOTBALL_TOKEN}  # Заголовки с токеном
     try:
         resp = requests.get(
@@ -140,7 +140,7 @@ async def handle_premier(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         data = resp.json()
         table = data.get("standings", [])[0].get("table", [])
-        msg_lines = ["🏆 Таблица Премьер-лиги:\n"]
+        msg_lines = ["Таблица Премьер-лиги:\n"]
         for t in table:
             pos = t["position"]  # Позиция в таблице
             team_name = t["team"]["name"]  # Название команды
@@ -149,7 +149,7 @@ async def handle_premier(update: Update, context: ContextTypes.DEFAULT_TYPE):
             points = t["points"]  # Количество очков
             msg_lines.append(f"{pos}. {team_name} — {points} очков")
     except Exception:
-        msg_lines = ["Не удалось получить таблицу Премьер-лиги 😅 Попробуйте позже."]
+        msg_lines = ["Не удалось получить таблицу Премьер-лиги. Попробуйте позже."]
     await update.message.reply_text("\n".join(msg_lines))
 
 # Ну и раз уж у меня футбольный бот, то пусть парсит новости с еспн
@@ -158,7 +158,7 @@ async def handle_football_news(update: Update, context: ContextTypes.DEFAULT_TYP
     try:
         feed_url = "https://www.espn.com/espn/rss/soccer/news"  # RSS-лента
         feed = feedparser.parse(feed_url)  # Парсим ленту
-        msg_lines = ["⚽ Последние футбольные новости:\n"]
+        msg_lines = ["Последние футбольные новости:\n"]
         for entry in feed.entries[:5]:  # Берем только 5 новостей
             title = entry.title  # Заголовок
             link = entry.link    # Ссылка
