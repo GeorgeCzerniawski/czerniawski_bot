@@ -4,29 +4,23 @@ Telegram-бот, предоставляющий информацию о пого
 
 ## Установка
 
-1. Клонируйте репозиторий:
+   Клонируйте репозиторий:
 
    ```bash
    git clone https://github.com/GeorgeCzerniawski/czerniawski_bot.git
    cd czerniawski_bot
 
-2. Установите зависимости:
+   Установите зависимости:
 
    ```bash
    pip install -r requirements.txt
 
-3. Создайте файл .env и добавьте в него ваш токен Telegram-бота:
-
-   ```bash
-   TG_TOKEN=your_telegram_bot_token
-
-
-4. Запустите бота:
+   Запустите бота:
 
    ```bash
    python czerniawski_bot.py
 
-5. Команды:
+   Команды:
 
    ```bash
    /start — Приветствие и информация о боте.
